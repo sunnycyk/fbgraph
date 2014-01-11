@@ -1,0 +1,224 @@
+<html>
+    <head>
+        <title>Facebook Related Graph</title>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <style>
+            body {
+                height: 100%;
+                width: 800;
+                margin-left: auto;
+                margin-right: auto;
+                border: 1px solid #11111;
+            }
+            .node image{
+                border-radius: 50%;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="fb-root"></div>
+        <script>
+          window.fbAsyncInit = function() {
+            // init the FB JS SDK
+            FB.init({
+              appId      : '150458183891',                        // App ID from the app dashboard
+              status     : true,                                 // Check Facebook Login status
+              xfbml      : true                                  // Look for social plugins on the page
+            });
+
+            var w=800, h=500;
+            var dataset = {
+                nodes: [],
+                edges: []
+            };
+            // Additional initialization  code such as adding Event Listeners goes here
+            FB.login(function(response) {
+                if (response.authResponse) {
+
+                    FB.api("/", 'POST', {
+                        batch: [
+                            {method: 'GET', relative_url: '/me?fields=name,picture'},
+                            {method: 'GET', relative_url: '/me/friends?fields=name,picture',}
+                        ]
+
+                    }, function(response) {
+                        if (response && !response.error) {
+                            dataset.nodes.push(JSON.parse(response[0].body));
+                            dataset.nodes = dataset.nodes.concat(JSON.parse(response[1].body).data);
+                        } 
+                        for (var i=1; i < dataset.nodes.length; i++) {
+                            dataset.edges.push({source: 0, target: i});
+                        }
+
+                         var force = d3.layout.force()
+                                 .nodes(dataset.nodes)
+                                 .links(dataset.edges)
+                                 .size([w, h])
+                                 .linkDistance([50])
+                                 .charge([-200])
+                                 .start();
+
+                        //Create SVG element
+                        var svg = d3.select("body")
+                                    .append("svg")
+                                    .attr("width", w)
+                                    .attr("height", h);
+                        
+
+                        //Create edges as lines
+                        var edges = svg.selectAll("line")
+                            .data(dataset.edges)
+                            .enter()
+                            .append("line")
+                            .style("stroke", "#ccc")
+                            .style("stroke-width", 1);
+                        
+                        //Create nodes as circles
+                     
+                        var nodes = svg.selectAll(".node")
+                            .data(dataset.nodes)
+                            .enter()
+                            .append("g")
+                            .attr('class', 'node')
+                            .call(force.drag);
+
+                        var clipPath = nodes.append("clipPath")
+                                .attr("id", function(d, i) {return "circle-mask" + i;})
+                                .append("circle")
+                                .attr("cx", "4")
+                                .attr("cy", "4")
+                                .attr("r", "12")
+                                .call(force.drag);
+
+                        nodes = nodes.append("image")
+                                    .attr("clip-path", function(d, i) { return  "url(#circle-mask" +i +")"})
+                                    .attr("xlink:href", function(d) {return d.picture.data.url})
+
+                                    .attr("x", "-8")
+                                    .attr("y", "-8")
+                                    .attr("width", "24")
+                                    .attr("height", "24")
+                                    .call(force.drag);
+                                    
+                        
+                        //Every time the simulation "ticks", this will be called
+                        force.on("tick", function() {
+
+                            edges.attr("x1", function(d) { return d.source.x; })
+                                 .attr("y1", function(d) { return d.source.y; })
+                                 .attr("x2", function(d) { return d.target.x; })
+                                 .attr("y2", function(d) { return d.target.y; });
+                        
+                            nodes.attr("transform", function(d) {return "translate(" +d.x + "," + d.y + ")"; } );
+                            
+                           // clipPath.attr("cx", function(d) {return d.x;}).attr("cy", function(d) {return d.y;});
+                        });
+                    });
+                } else {
+                    console.log('User cancelled login or did not fully authorize.');
+                }
+            }, {scope:''});
+          };
+
+          // Load the SDK asynchronously
+          (function(d, s, id){
+             var js, fjs = d.getElementsByTagName(s)[0];
+             if (d.getElementById(id)) {return;}
+             js = d.createElement(s); js.id = id;
+             js.src = "//connect.facebook.net/en_US/all.js";
+             fjs.parentNode.insertBefore(js, fjs);
+           }(document, 'script', 'facebook-jssdk'));
+        </script>
+        <script type="text/javascript">
+          
+       /*     var w=500, h=300;
+            var dataset = {
+                nodes: [
+                    {name: "Sunny", image: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/s48x48/41364_684053594_7003_q.jpg"},
+                    {name: "Jess", image: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/s48x48/41364_684053594_7003_q.jpg"},
+                    {name: "Prosper", image: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-frc1/s48x48/41364_684053594_7003_q.jpg"},
+                    {name: "Queenie", image: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-prn1/c38.8.104.104/s100x100/47431_10151079934531787_1837420927_a.jpg"},
+                ],
+                edges: [
+                    {source: 0, target: 1},
+                    {source: 0, target: 2},
+                    {source: 0, target: 3},
+                    {source: 1, target: 0},
+                    {source: 1, target: 2},
+                    {source: 2, target: 0},
+                    {source: 2, target: 1},
+                    {source: 2, target: 3},
+                    {source: 3, target: 0},
+                    {source: 3, target: 2}
+
+                ]
+            };
+
+            var force = d3.layout.force()
+                                 .nodes(dataset.nodes)
+                                 .links(dataset.edges)
+                                 .size([w, h])
+                                 .linkDistance([50])
+                                 .charge([-100])
+                                 .start();
+
+            var colors = d3.scale.category10();
+
+            //Create SVG element
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+            
+
+            //Create edges as lines
+            var edges = svg.selectAll("line")
+                .data(dataset.edges)
+                .enter()
+                .append("line")
+                .style("stroke", "#ccc")
+                .style("stroke-width", 1);
+            
+            //Create nodes as circles
+         
+            var nodes = svg.selectAll(".node")
+                .data(dataset.nodes)
+                .enter()
+                .append("g")
+                .attr('class', 'node')
+                .call(force.drag);
+
+            var clipPath = nodes.append("clipPath")
+                    .attr("id", function(d, i) {return "circle-mask" + i;})
+                    .append("circle")
+                    .attr("cx", "4")
+                    .attr("cy", "4")
+                    .attr("r", "12")
+                    .call(force.drag);
+
+            nodes = nodes.append("image")
+                        .attr("clip-path", function(d, i) { return  "url(#circle-mask" +i +")"})
+                        .attr("xlink:href", function(d) {return d.image})
+
+                        .attr("x", "-8")
+                        .attr("y", "-8")
+                        .attr("width", "24")
+                        .attr("height", "24")
+                        .call(force.drag);
+                        
+            
+            //Every time the simulation "ticks", this will be called
+            force.on("tick", function() {
+
+                edges.attr("x1", function(d) { return d.source.x; })
+                     .attr("y1", function(d) { return d.source.y; })
+                     .attr("x2", function(d) { return d.target.x; })
+                     .attr("y2", function(d) { return d.target.y; });
+            
+                nodes.attr("transform", function(d) {return "translate(" +d.x + "," + d.y + ")"; } );
+                
+               // clipPath.attr("cx", function(d) {return d.x;}).attr("cy", function(d) {return d.y;});
+            });*/
+        </script>
+    </body>
+</html>
