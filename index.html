@@ -166,11 +166,9 @@
                                         .attr("y", "-8")
                                         .attr("width", "24")
                                         .attr("height", "24")
-                                        .call(force.drag).on("mouseover", highlightLine()).on("mouseout", highlightLine());
+                                        .call(force.drag).on("mouseover", highlightLine()).on("mouseout", function(d) { edges.attr("style", "stroke: #cccccc;")});
                                         
-                            /*nodes.on("mouseover", function(d) {
-                                console.log(d.name);
-                            }); */
+                          
                             //Every time the simulation "ticks", this will be called
                             force.on("tick", function() {
 
@@ -185,7 +183,7 @@
 
                             function highlightLine() {
                                 return function(d) {
-                                    console.log("test");
+                                    
                                     edges.attr("style", function(o) {
                                         return o.source === d || o.target === d ? "stroke:rgb(200,0,0);" : "stroke:#cccccc;";
                                     });
