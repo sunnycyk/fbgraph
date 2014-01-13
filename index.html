@@ -40,6 +40,9 @@
             .github {
                 margin: 5px;
             }
+            
+           
+
 
         </style>
     </head>
@@ -153,8 +156,7 @@
                                     .append("circle")
                                     .attr("cx", "4")
                                     .attr("cy", "4")
-                                    .attr("r", "12")
-                                    .call(force.drag);
+                                    .attr("r", "12");
 
                             nodes = nodes.append("image")
                                         .attr("clip-path", function(d, i) { return  "url(#circle-mask" +i +")"})
@@ -164,7 +166,7 @@
                                         .attr("y", "-8")
                                         .attr("width", "24")
                                         .attr("height", "24")
-                                        .call(force.drag);
+                                        .call(force.drag).on("mouseover", highlightLine()).on("mouseout", highlightLine());
                                         
                             /*nodes.on("mouseover", function(d) {
                                 console.log(d.name);
@@ -180,6 +182,15 @@
                                 nodes.attr("transform", function(d) {return "translate(" +d.x + "," + d.y + ")"; } );
                                 
                             });
+
+                            function highlightLine() {
+                                return function(d) {
+                                    console.log("test");
+                                    edges.attr("style", function(o) {
+                                        return o.source === d || o.target === d ? "stroke:rgb(200,0,0);" : "stroke:#cccccc;";
+                                    });
+                                }
+                            }
                 });
             
             }
