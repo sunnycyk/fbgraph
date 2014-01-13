@@ -28,9 +28,16 @@
           
                 border: 1px solid #4f5751;
                 margin-top: 10px;
+                margin-bottom: 10px;
             }
-            .fb-like {
+            
+            .leftPanel {
+                display: block;
+                width: 50;
                 float: left;
+            }
+            .github {
+                margin: 5px;
             }
 
         </style>
@@ -187,8 +194,12 @@
              fjs.parentNode.insertBefore(js, fjs);
            }(document, 'script', 'facebook-jssdk'));
         </script>
-        <div class="fb-like" data-href="http://toysmine.net/fbgraph/" data-layout="box_count" data-action="like" data-show-faces="true" data-share="true"></div>
-        
+        <div class="leftPanel">
+            <div class="fb-like" data-href="http://toysmine.net/fbgraph/" data-layout="box_count" data-action="like" data-show-faces="true" data-share="true"></div>
+            <div class="github">
+                <a href="https://github.com/sunnycyk/fbgraph"> <img src="GitHub.png" alt="GitHub"></a>
+            </div>  
+        </div>
         <input id="loginButton" type="button" value="Click to create your Friend Related Graph" onclick="authUser();" />
         <div id="fbgraph">
         </div>
