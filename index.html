@@ -6,7 +6,7 @@
         <meta property="og:url"             content="http://www.toysmine.net/fbgraph" /> 
         <meta property="og:title"           content="Friend Releted Graph" /> 
         <meta property="og:description"     content="A Experimental Facebook App Create with D3js." />
-        
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
         <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
         <style>
 
@@ -34,16 +34,23 @@
             
             .leftPanel {
                 display: block;
-                width: 50;
+                width: 80;
                 float: left;
+                z-index: 1000;
+                border: solid 1px #cccccc;
+                padding: 5px;
             }
             .github {
                 margin: 5px;
             }
+
+            #login {
+                width: 100%;
+                text-align: center; 
+                margin-top: 20%;
+            }
+
             
-           
-
-
         </style>
     </head>
     <body>
@@ -68,12 +75,12 @@
         // Additional initialization  code such as adding Event Listeners goes here
             function checkLoginStatus(response) {
                  if (response.status === "connected") {
-                        document.getElementById('loginButton').style.display = 'none';
+                        document.getElementById('login').style.display = 'none';
                         fbGraph();
                     }
                     else { 
                         // display login button, user is not login
-                        document.getElementById('loginButton').style.display = 'block';
+                        document.getElementById('login').style.display = 'block';
                     }
             }
 
@@ -185,16 +192,13 @@
                                 return function(d) {
                                     
                                     edges.attr("style", function(o) {
-                                        return o.source === d || o.target === d ? "stroke:rgb(200,0,0);" : "stroke:#cccccc;";
+                                        return o.source === d || o.target === d ? "stroke:rgb(255,0,0);" : "stroke:#cccccc;";
                                     });
                                 }
                             }
                 });
             
             }
-            
-          
-
           // Load the SDK asynchronously
           (function(d, s, id){
              var js, fjs = d.getElementsByTagName(s)[0];
@@ -210,9 +214,14 @@
                 <a href="https://github.com/sunnycyk/fbgraph"> <img src="GitHub.png" alt="GitHub"></a>
             </div>  
         </div>
-        <input id="loginButton" type="button" value="Click to create your Friend Related Graph" onclick="authUser();" />
+        
         <div id="fbgraph">
+            <div id="login">
+                <div class="alert alert-warning">This is experimental.  If you have too many friends, this app may not work well.</div>
+                 <input id="loginButton" class="btn btn-primary" type="button" value="Create your Facebook Friends Related Graph now!" onclick="authUser();" />
+            </div>
         </div>
+
         <div id="ad">
             <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
             <!-- fbgraph -->
