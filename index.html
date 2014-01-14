@@ -95,7 +95,7 @@
                             batch: [
                                 {method: 'GET', relative_url: '/me?fields=name,picture'},
                                 {method: 'GET', relative_url: '/me/friends?fields=name,picture'},
-                                {method: 'GET', relative_url: 'method/fql.query?query=SELECT+uid1,uid2+FROM+friend+WHERE+(uid1+IN+(SELECT+uid1+FROM+friend+WHERE+uid2=me()))+AND+(uid2+IN+(SELECT+uid1+FROM+friend+WHERE+uid2=me()))+ORDER+BY+uid1'}
+                                {method: 'GET', relative_url: 'method/fql.query?query=SELECT+uid1,uid2+FROM+friend+WHERE+(uid1+IN+(SELECT+uid1+FROM+friend+WHERE+uid2=me()))+AND+(uid2+IN+(SELECT+uid1+FROM+friend+WHERE+uid2=me()))+ORDER+BY+uid1+LIMIT+2000'}
                             ]
 
                         }, function(response) {
@@ -217,7 +217,7 @@
         
         <div id="fbgraph">
             <div id="login">
-                <div class="alert alert-warning"><strong>Warning! </strong>This is experimental.  It has been tested with 200 friends, but if you have too many friends, this app may not work well.  </div>
+                <div class="alert alert-warning"><strong>Warning! </strong>This is experimental.  Currently mutual friends link is limited to 2000.  If you have too many friends, some links will be missing. </div>
                  <input id="loginButton" class="btn btn-primary" type="button" value="Create your Facebook Friends Related Graph now!" onclick="authUser();" />
             </div>
         </div>
